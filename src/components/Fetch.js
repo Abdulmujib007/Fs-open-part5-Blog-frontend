@@ -26,5 +26,20 @@ const addmore = async newBlog => {
 const response = await axios.post(baseUrl,newBlog,config)
  return response.data
 }
+const update = async (id,newObj) => {
+    const config = {
+        headers:{Authorization:token}
+    }
+    const response = await axios.put(`/api/blog/${id}`,newObj,config)
+    return response.data
+}
 
-export default {getAllBlog,login,getToken,addmore}
+const remove = async id => {
+    const config = {
+        headers:{Authorization:token}
+    }
+    const response = await axios.delete(`${baseUrl}/${id}`,config)
+    return response
+}
+
+export default {getAllBlog,login,getToken,addmore,update,remove}

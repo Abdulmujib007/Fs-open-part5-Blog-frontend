@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import Fetch from "./components/Fetch";
+import Login from "./components/Login";
+import Person from "./components/Person";
+import Toggleable from "./components/Toggleable";
 
 const App = () => {
   const [allBlog, setAllBlog] = useState([]);
-  const [username, setUserName] = useState("");
-  const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
+  const [username, setUserName] = useState("");
+  const [password, setPassword] = useState("");
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
@@ -42,92 +45,103 @@ const App = () => {
     }
   };
   const handleAddMore = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     const newObj = {
       title,
       author,
       url,
     };
     try {
-     const addedBlog =  await Fetch.addmore(newObj);
-     setAllBlog(allBlog.concat(addedBlog))
+      const addedBlog = await Fetch.addmore(newObj);
+      setAllBlog(allBlog.concat(addedBlog));
       setTitle("");
       setAuthor("");
       setUrl("");
-      setError(`added ${addedBlog.title} by ${addedBlog.author} to blog list`)
+      setError(`added ${addedBlog.title} by ${addedBlog.author} to blog list`);
       setTimeout(() => {
-        setError('')
+        setError("");
       }, 3000);
     } catch (exception) {
       console.log(exception);
     }
   };
-  const logOut = (e) => {
+  const logOut = () => {
     window.localStorage.removeItem("loggedInUser");
   };
+  const handleUser = (e) => setUserName(e.target.value);
+  const handlePass = (e) => setPassword(e.target.value);
+  const handleTitle = (e) => setTitle(e.target.value);
+  const handleAuthor = (e) => setAuthor(e.target.value);
+  const handleUrl = (e) => setUrl(e.target.value);
 
-  const loginForm = () => {
-    return (
-      <>
-        <h1>login to application</h1>
-        <form onSubmit={handleSubmit}>
-          username
-          <input
-            type="text"
-            value={username}
-            onChange={({ target }) => setUserName(target.value)}
-          />{" "}
-          <br />
-          password
-          <input
-            type="text"
-            value={password}
-            onChange={({ target }) => setPassword(target.value)}
-          />
-          <button type="submit">login</button>
-        </form>
-      </>
-    );
+  const handlelike = async (blogId) => {
+    const blogToBeUpdated = allBlog.find((item) => item.id === blogId);
+    blogToBeUpdated.likes += 1;
+    const newObj = {
+      title: blogToBeUpdated.title,
+      author: blogToBeUpdated.author,
+      url: blogToBeUpdated.url,
+      likes: blogToBeUpdated.likes,
+    };
+    const res = await Fetch.update(blogId, newObj);
+    setAllBlog(allBlog.map((blog) => (blog.id !== res.id ? blog : res)));
   };
-
-  const personBlogs = () => {
-    const blog = allBlog.filter((item) => (item.user.id || item.user ) === user.id);
-    return (
-      <div>
-        <h2>{user.username} logged in</h2>
-        <form onSubmit={logOut}>
-          <button type="submit">logOut</button>
-        </form>
-        <form onSubmit={handleAddMore}>
-          <p>create blog</p>
-          title
-          <input
-            value={title}
-            onChange={({ target }) => setTitle(target.value)}
-          />
-          <br />
-          author
-          <input
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
-          />
-          <br />
-          url
-          <input value={url} onChange={({ target }) => setUrl(target.value)} />
-          <button type="submit">create</button>
-        </form>
-        <h3>Blogs</h3>
-        {blog.map((blog, blogInd) => {
-          return <p key={`blog${blogInd}`}>{blog.title}</p>;
-        })}
-      </div>
-    );
+  const handleRemove = async (blogId) => {
+    const removedBlog = allBlog.find((blog) => blog.id === blogId);
+    if (
+      window.confirm(
+        `Remove blog ${removedBlog.title}! by ${removedBlog.author} `
+      ) === true
+    ) {
+      await Fetch.remove(blogId);
+      setAllBlog(allBlog.filter((blog) => blog.id !== blogId));
+    }
   };
 
   return (
     <div>
-      <p>{error}</p>
-      {user === null ? loginForm() : personBlogs()}
+      <p
+        style={
+          error
+            ? {
+                height: "2rem",
+                borderRadius: "5px",
+                background: "gray",
+                border: "2px solid green",
+                color: "green",
+                fontSize: "1.25rem",
+              }
+            : {}
+        }
+      >
+        {error}
+      </p>
+      {user === null ? (
+        <Toggleable text="login">
+          <Login
+            handleSubmit={handleSubmit}
+            handlePass={handlePass}
+            handleUser={handleUser}
+            username={username}
+            password={password}
+          />
+        </Toggleable>
+      ) : (
+        <Person
+          allBlog={allBlog}
+          user={user}
+          logOut={logOut}
+          handleAddMore={handleAddMore}
+          title={title}
+          author={author}
+          url={url}
+          handleAuthor={handleAuthor}
+          handleTitle={handleTitle}
+          handleUrl={handleUrl}
+          handlelike={handlelike}
+          handleRemove={handleRemove}
+        />
+      )}
     </div>
   );
 };
