@@ -1,7 +1,7 @@
 /* eslint-disable react/react-in-jsx-scope */
 import Toggleable from './Toggleable'
 import Show from './Show'
-import PropTypes from 'prop-types'
+// import PropTypes from 'prop-types'
 // import { useRef } from "react";
 
 const Person = ({
@@ -48,7 +48,7 @@ const Person = ({
       <h3>Blogs</h3>
       {blog.map((blog, blogInd) => {
         return (
-          <div key={`first ${blogInd}`}style={{ border: '1px solid black', marginTop: '5px' }}>
+          <div className='div' key={`first ${blogInd}`}style={{ border: '1px solid black', marginTop: '5px' }}>
             <span key={`blog${blogInd}`}>{blog.title}</span>
             <Show>
               <span key={`url${blogInd}`}>{blog.url}</span>
@@ -66,19 +66,19 @@ const Person = ({
     </div>
   )
 }
-Person.propTypes =  {
-  allBlog: PropTypes.array.isRequired,
-  user:PropTypes.object.isRequired,
-  handleAddMore:PropTypes.func.isRequired,
-  title:PropTypes.string.isRequired,
-  url:PropTypes.string.isRequired,
-  author:PropTypes.string.isRequired,
-  logOut:PropTypes.func.isRequired,
-  handleTitle:PropTypes.func.isRequired,
-  handleAuthor:PropTypes.func.isRequired,
-  handleUrl:PropTypes.func.isRequired,
-  handlelike:PropTypes.func.isRequired,
-  handleRemove:PropTypes.func.isRequired
-}
+// Person.propTypes =  {
+//   allBlog: PropTypes.array.isRequired,
+//   user:PropTypes.object.isRequired,
+//   handleAddMore:PropTypes.func.isRequired,
+//   title:PropTypes.string.isRequired,
+//   url:PropTypes.string.isRequired,
+//   author:PropTypes.string.isRequired,
+//   logOut:PropTypes.func.isRequired,
+//   handleTitle:PropTypes.func.isRequired,
+//   handleAuthor:PropTypes.func.isRequired,
+//   handleUrl:PropTypes.func.isRequired,
+//   handlelike:PropTypes.func.isRequired,
+//   handleRemove:PropTypes.func.isRequired
+// }
 
 export default Person

@@ -1,6 +1,5 @@
 // eslint-disable-next-line no-undef
 module.exports = {
-  mode:'jit',
   purge: [],
   darkMode: false, // or 'media' or 'class'
   theme: {
